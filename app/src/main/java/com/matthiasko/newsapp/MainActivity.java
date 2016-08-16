@@ -3,6 +3,7 @@ package com.matthiasko.newsapp;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,22 +23,31 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
 
         listView = (ListView) findViewById(R.id.news_listview);
 
-        // TODO: automatically fetch posts on app start?
-        // use database?
+        if (savedInstanceState != null) {
 
-        // setup initial empty list + empty view
-        results = new NewsItem[0];
-        newsAdapter = new NewsAdapter(this, -1, results);
-        listView.setAdapter(newsAdapter);
-        listView.setEmptyView(findViewById(R.id.empty_textview));
+            Parcelable[] ps = savedInstanceState.getParcelableArray("NEWSITEMS_ARRAY");
+            //System.out.println("ps.length = " + ps.length);
+            NewsItem[] newsItems = new NewsItem[ps.length];
+            System.arraycopy(ps, 0, newsItems, 0, ps.length);
+            results = newsItems;
+            newsAdapter = new NewsAdapter(this, -1, newsItems);
+            listView.setAdapter(newsAdapter);
+            listView.setEmptyView(findViewById(R.id.empty_textview));
+            newsAdapter.notifyDataSetChanged();
+
+        } else {
+            //System.out.println("********* INITIAL SETUP");
+            // setup initial empty list + empty view
+            results = new NewsItem[0];
+            newsAdapter = new NewsAdapter(this, -1, results);
+            listView.setAdapter(newsAdapter);
+            listView.setEmptyView(findViewById(R.id.empty_textview));
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 NewsItem item = (NewsItem) listView.getItemAtPosition(position);
-
-                //System.out.println("item.getWebUrl() = " + item.getWebUrl());
-
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getWebUrl()));
                 startActivity(browserIntent);
             }
@@ -47,14 +57,17 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
     }
 
     @Override
-    public void sendData(NewsItem[] itemsArray) {
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (results != null) {
+            outState.putParcelableArray("NEWSITEMS_ARRAY", results);
+        }
+    }
 
+    @Override
+    public void sendData(NewsItem[] itemsArray) {
         results = itemsArray;
         newsAdapter = new NewsAdapter(this, -1, results);
         listView.setAdapter(newsAdapter);
-
-
-        //System.out.println("FROM ASYNC TASK -> string = " + string);
-
     }
 }

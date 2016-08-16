@@ -141,7 +141,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
             URL url = new URL(builtUri.toString());
 
-            System.out.println("builtUri = " + builtUri.toString());
+            //System.out.println("builtUri = " + builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
