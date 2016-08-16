@@ -56,6 +56,14 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
                     .resize(100, 100)
                     .centerCrop()
                     .into(holder.thumbnailImageView);
+        } else {
+
+            Picasso.with(mContext)
+                    .load(R.drawable.nothumbnail)
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(holder.thumbnailImageView);
+
         }
 
         return convertView;
