@@ -42,6 +42,8 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
             holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
 
+            holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
+
             convertView.setTag(holder);
 
         } else {
@@ -55,15 +57,13 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
         holder.titleTextView.setText(currentNewsItem.getTitle());
 
+        holder.bylineTextView.setText(currentNewsItem.getByline());
+
         Picasso.with(mContext)
                 .load(currentNewsItem.getThumbnail())
                 .resize(100, 100)
                 .centerCrop()
                 .into(holder.thumbnailImageView);
-
-
-
-
 
         return convertView;
     }
@@ -72,6 +72,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
         TextView sectionNameTextView;
         TextView titleTextView;
+        TextView bylineTextView;
         ImageView thumbnailImageView;
 
     }

@@ -63,6 +63,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
                     String thumbnail = fieldsJson.getString("thumbnail");
 
+                    String byline = fieldsJson.getString("byline");
+
                     //System.out.println("thumbnail = " + thumbnail);
 
 
@@ -71,6 +73,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                     newsItem.setThumbnail(thumbnail);
                     newsItem.setSectionName(sectionName);
                     newsItem.setWebUrl(webUrl);
+                    newsItem.setByline(byline);
 
                     //System.out.println("title = " + title);
 
@@ -122,6 +125,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             final String API_KEY_PARAM = "api-key";
 
             final String THUMBNAIL = "thumbnail";
+            final String BYLINE = ",byline";
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
@@ -131,13 +135,13 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             Uri builtUri = Uri.parse(BOOKS_BASE_URL)
                     .buildUpon()
                     .appendQueryParameter(DATE_PARAM, datetime)
-                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL)
+                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE)
                     .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
                     .build();
 
             URL url = new URL(builtUri.toString());
 
-            //System.out.println("builtUri = " + builtUri.toString());
+            System.out.println("builtUri = " + builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();

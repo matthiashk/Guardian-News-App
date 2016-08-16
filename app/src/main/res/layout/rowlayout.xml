@@ -35,6 +35,20 @@
         android:paddingBottom="5dp"
         android:paddingStart="10dp"/>
 
+    <TextView
+        android:id="@+id/byline_textview"
+        android:textColor="@android:color/black"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Byline"
+        android:layout_below="@+id/title_textview"
+        android:layout_toEndOf="@+id/thumbnail_imageview"
+
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="10dp"/>
+
 
 
 </RelativeLayout>

@@ -13,6 +13,15 @@ public class NewsItem {
     String title;
     String webUrl;
     String thumbnail;
+    String byline;
+
+    public String getByline() {
+        return byline;
+    }
+
+    public void setByline(String byline) {
+        this.byline = byline;
+    }
 
     public String getThumbnail() {
         return thumbnail;
