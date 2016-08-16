@@ -1,5 +1,6 @@
 package com.matthiasko.newsapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,8 +27,11 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     private final String LOG_TAG = FetchNewsAsyncTask.class.getSimpleName();
     private final Context mContext;
 
-    public FetchNewsAsyncTask(Context context) {
+    SendToActivity dataSendToActivity;
+
+    public FetchNewsAsyncTask(Context context, Activity activity) {
         mContext = context;
+        dataSendToActivity = (SendToActivity) activity;
     }
 
     NewsItem[] values;
@@ -47,18 +51,28 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
                 values = new NewsItem[jArray.length()];
 
-
                 for(int i = 0; i < jArray.length(); i++) {
 
-
-
                     String title = jArray.getJSONObject(i).getString("webTitle");
+
+                    String sectionName = jArray.getJSONObject(i).getString("sectionName");
+
+                    String webUrl = jArray.getJSONObject(i).getString("webUrl");
+
+                    JSONObject fieldsJson = jArray.getJSONObject(i).getJSONObject("fields");
+
+                    String thumbnail = fieldsJson.getString("thumbnail");
+
+                    //System.out.println("thumbnail = " + thumbnail);
 
 
                     NewsItem newsItem = new NewsItem();
                     newsItem.setTitle(title);
+                    newsItem.setThumbnail(thumbnail);
+                    newsItem.setSectionName(sectionName);
+                    newsItem.setWebUrl(webUrl);
 
-                    System.out.println("title = " + title);
+                    //System.out.println("title = " + title);
 
                     values[i] = newsItem;
                 }
@@ -104,7 +118,10 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
         try {
             final String BOOKS_BASE_URL = "http://content.guardianapis.com/search?";
             final String DATE_PARAM = "from-date";
+            final String FIELDS_PARAM = "show-fields";
             final String API_KEY_PARAM = "api-key";
+
+            final String THUMBNAIL = "thumbnail";
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
@@ -114,6 +131,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             Uri builtUri = Uri.parse(BOOKS_BASE_URL)
                     .buildUpon()
                     .appendQueryParameter(DATE_PARAM, datetime)
+                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL)
                     .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
                     .build();
 
@@ -207,6 +225,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     @Override
     protected void onPostExecute(NewsItem[] values) {
         super.onPostExecute(values);
+
+        dataSendToActivity.sendData(values);
 
         if (values != null) {
             // set new results

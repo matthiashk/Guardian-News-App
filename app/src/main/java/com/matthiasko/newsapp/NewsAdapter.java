@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by matthiasko on 8/15/16.
@@ -33,11 +36,11 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
             holder = new ViewHolder();
 
+            holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
+
             holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
 
-
-
-
+            holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
 
             convertView.setTag(holder);
 
@@ -48,8 +51,15 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
         NewsItem currentNewsItem = objects[position];
 
+        holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
 
         holder.titleTextView.setText(currentNewsItem.getTitle());
+
+        Picasso.with(mContext)
+                .load(currentNewsItem.getThumbnail())
+                .resize(100, 100)
+                .centerCrop()
+                .into(holder.thumbnailImageView);
 
 
 
@@ -60,6 +70,9 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
     static class ViewHolder {
 
+        TextView sectionNameTextView;
         TextView titleTextView;
+        ImageView thumbnailImageView;
+
     }
 }

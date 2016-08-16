@@ -12,6 +12,15 @@ public class NewsItem {
     Date publicationDate;
     String title;
     String webUrl;
+    String thumbnail;
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 
     public String getId() {
         return id;
