@@ -68,7 +68,6 @@ public class NewsItem implements Parcelable {
         dest.writeString(webUrl);
         dest.writeString(thumbnail);
         dest.writeString(byline);
-
     }
 
     // some parcelable code from https://dzone.com/articles/using-android-parcel

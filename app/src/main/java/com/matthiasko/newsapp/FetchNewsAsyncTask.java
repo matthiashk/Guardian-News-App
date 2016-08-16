@@ -61,12 +61,13 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
                     JSONObject fieldsJson = jArray.getJSONObject(i).getJSONObject("fields");
 
-                    String thumbnail = fieldsJson.getString("thumbnail");
+                    String thumbnail = "";
+
+                    if (fieldsJson.has("thumbnail")) {
+                        thumbnail = fieldsJson.getString("thumbnail");
+                    }
 
                     String byline = fieldsJson.getString("byline");
-
-                    //System.out.println("thumbnail = " + thumbnail);
-
 
                     NewsItem newsItem = new NewsItem();
                     newsItem.setTitle(title);
@@ -75,24 +76,12 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                     newsItem.setWebUrl(webUrl);
                     newsItem.setByline(byline);
 
-                    //System.out.println("title = " + title);
-
                     values[i] = newsItem;
                 }
             } else {
 
                 // clear array here since there are no results found
                 values = new NewsItem[0];
-
-                /*
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,
-                                "No results found.", Toast.LENGTH_LONG).show();
-                    }
-                });
-                */
             }
         }
 
@@ -106,7 +95,6 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     protected NewsItem[] doInBackground(Void... params) {
         // doInBackground main code based on my previous project Popular Movies 2
 
-
         // will contain the raw JSON response as a string.
         String booksJsonResponseString;
 
@@ -116,7 +104,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
         NewsItem[] values = new NewsItem[100];
 
         // example query
-        // http://content.guardianapis.com/search?from-date=2016-08-15&api-key=2084f91c-8e90-4a3e-b7e4-bafc3c9a267f
+        // http://content.guardianapis.com/search?from-date=2016-08-15&api-key=myApiKey
 
         try {
             final String BOOKS_BASE_URL = "http://content.guardianapis.com/search?";
@@ -147,34 +135,10 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             urlConnection.connect();
 
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-
-                //System.out.println("urlConnection.getResponseMessage() = " + urlConnection.getResponseMessage());
-
-                /*
-                MainActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,
-                                "Error: received HTTP status code 400 - Bad Request", Toast.LENGTH_LONG).show();
-                    }
-                });
-                */
-
                 return null;
             }
 
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_UNAVAILABLE) {
-
-                /*
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,
-                                "Error: received HTTP status code 503 - Service Unavailable", Toast.LENGTH_LONG).show();
-                    }
-                });
-                */
-
                 return null;
             }
 
@@ -230,16 +194,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     protected void onPostExecute(NewsItem[] values) {
         super.onPostExecute(values);
 
-        dataSendToActivity.sendData(values);
-
         if (values != null) {
-            // set new results
-            /*
-            placesAdapter = new BooksAdapter(mContext, -1, values);
-            listview.setAdapter(placesAdapter);
-            placesAdapter.notifyDataSetChanged();
-            results = values;
-            */
+            dataSendToActivity.sendData(values);
         }
     }
 }

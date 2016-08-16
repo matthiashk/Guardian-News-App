@@ -33,37 +33,30 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.rowlayout, parent, false);
-
             holder = new ViewHolder();
-
             holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
-
             holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
-
             holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
-
             holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
-
             convertView.setTag(holder);
 
         } else {
-
             holder = (ViewHolder) convertView.getTag();
         }
 
         NewsItem currentNewsItem = objects[position];
-
         holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
-
         holder.titleTextView.setText(currentNewsItem.getTitle());
-
         holder.bylineTextView.setText(currentNewsItem.getByline());
 
-        Picasso.with(mContext)
-                .load(currentNewsItem.getThumbnail())
-                .resize(100, 100)
-                .centerCrop()
-                .into(holder.thumbnailImageView);
+        if (!currentNewsItem.getThumbnail().isEmpty()) {
+
+            Picasso.with(mContext)
+                    .load(currentNewsItem.getThumbnail())
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(holder.thumbnailImageView);
+        }
 
         return convertView;
     }

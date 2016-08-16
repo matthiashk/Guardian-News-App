@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
         if (savedInstanceState != null) {
 
             Parcelable[] ps = savedInstanceState.getParcelableArray("NEWSITEMS_ARRAY");
-            //System.out.println("ps.length = " + ps.length);
             NewsItem[] newsItems = new NewsItem[ps.length];
             System.arraycopy(ps, 0, newsItems, 0, ps.length);
             results = newsItems;
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             newsAdapter.notifyDataSetChanged();
 
         } else {
-            //System.out.println("********* INITIAL SETUP");
             // setup initial empty list + empty view
             results = new NewsItem[0];
             newsAdapter = new NewsAdapter(this, -1, results);
