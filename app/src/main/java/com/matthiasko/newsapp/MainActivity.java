@@ -3,17 +3,40 @@ package com.matthiasko.newsapp;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity implements SendToActivity {
 
     ListView listView;
     NewsAdapter newsAdapter;
     NewsItem[] results;
+
+    public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
+
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String value = (String) msg.obj;
+
+            // TODO: send to articleviewactivity
+
+            Intent intent = new Intent(getApplicationContext(), ArticleViewActivity.class);
+            intent.putExtra(EXTRA_MESSAGE, value);
+            startActivity(intent);
+
+            System.out.println("MAINACTIVITY value = " + value);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +68,71 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //TODO: instead of launching url in web browser
+                // make api request for selected article
+                // get full text and load in textview/new activity
+
                 NewsItem item = (NewsItem) listView.getItemAtPosition(position);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getWebUrl()));
-                startActivity(browserIntent);
+                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getWebUrl()));
+
+                //System.out.println("item.getWebUrl() = " + item.getWebUrl());
+
+                // change webUrl to get article text
+                // example url: https://www.theguardian.com/artanddesign/2017/feb/24/andy-warhols-mad-men-era-he-found-new-york-at-this-incredible-moment
+                // change https://www.theguardian.com to https://content.guardianapis.com
+                // add api-key
+                // add &show-blocks=all to end of url
+
+                String webUrl = item.getWebUrl();
+
+                try {
+                    URL aURL = new URL(webUrl);
+
+                    String changedHost = "content.guardianapis.com";
+
+                    URL changedURL = new URL(aURL.getProtocol(), changedHost, aURL.getPort(), aURL.getFile());
+
+                    final String SHOW_BLOCKS_PARAM = "show-blocks";
+                    final String API_KEY_PARAM = "api-key";
+
+                    String showBlocksAll = "all";
+
+                    Uri builtUri = Uri.parse(changedURL.toString())
+                            .buildUpon()
+                            .appendQueryParameter(SHOW_BLOCKS_PARAM, showBlocksAll)
+                            //.appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
+                            .appendQueryParameter(API_KEY_PARAM, getResources().getString(R.string.api_key))
+                            .build();
+
+                    URL url = new URL(builtUri.toString());
+
+                    //System.out.println("url.toString() = " + url.toString());
+
+                    FetchArticleAsyncTask fetchTask = new FetchArticleAsyncTask();
+
+                    fetchTask.setHandler(handler);
+                    fetchTask.execute(url);
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+                // send changed url to fetcharticleasynctask to process url
+
+
+
+
+                // bodyTextSummary will contain article text
+
+                // send bodyTextSummary to new activity and display to user
+
+                // disabled
+                //startActivity(browserIntent);
+
+
+
+
             }
         });
 

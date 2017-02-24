@@ -17,6 +17,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.matthiasko.newsapp.ArticleViewActivity"
+            android:label="@string/title_activity_articleview"
+            android:parentActivityName="com.matthiasko.newsapp.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.matthiasko.newsapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

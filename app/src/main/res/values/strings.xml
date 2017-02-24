@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="title_activity_articleview">Article View</string>
+    <string name="api_key">2084f91c-8e90-4a3e-b7e4-bafc3c9a267f</string>
+</resources>
