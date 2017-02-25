@@ -1,5 +1,6 @@
 package com.matthiasko.newsapp;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,12 +37,14 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
 
             // send to articleviewactivity
 
-            Intent intent = new Intent(getApplicationContext(), ArticleViewActivity.class);
+            Intent intent = new Intent(MainActivity.this, ArticleViewActivity.class);
             intent.putExtra(EXTRA_MESSAGE, value);
             intent.putExtra(EXTRA_TITLE, title);
             intent.putExtra(EXTRA_BYLINE, byline);
 
-            startActivity(intent);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+            startActivity(intent, options.toBundle());
+
 
             //System.out.println("MAINACTIVITY value = " + value);
         }
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             results = newsItems;
             newsAdapter = new NewsAdapter(this, -1, newsItems);
             listView.setAdapter(newsAdapter);
-            listView.setEmptyView(findViewById(R.id.empty_textview));
+            //listView.setEmptyView(findViewById(R.id.empty_textview));
             newsAdapter.notifyDataSetChanged();
 
         } else {
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             results = new NewsItem[0];
             newsAdapter = new NewsAdapter(this, -1, results);
             listView.setAdapter(newsAdapter);
-            listView.setEmptyView(findViewById(R.id.empty_textview));
+            //listView.setEmptyView(findViewById(R.id.empty_textview));
         }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,11 +96,10 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
                 // add api-key
                 // add &show-blocks=all to end of url
 
-
                 // send title and byline to articleviewactivity
+                // set title and byline here, sent by handler after
                 title = item.getTitle();
                 byline = item.getByline();
-
 
                 String webUrl = item.getWebUrl();
 
@@ -137,6 +141,14 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
         });
 
         new FetchNewsAsyncTask(this, MainActivity.this).execute();
+
+
+        // setup transition animations
+        Transition exitTrans = new Slide();
+        getWindow().setExitTransition(exitTrans);
+
+        Transition reenterTrans = new Slide();
+        getWindow().setReenterTransition(reenterTrans);
     }
 
     @Override
@@ -152,5 +164,15 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
         results = itemsArray;
         newsAdapter = new NewsAdapter(this, -1, results);
         listView.setAdapter(newsAdapter);
+    }
+
+    @Override
+    public void stopLoadingPanel(Boolean isFinishedLoading) {
+
+        if (isFinishedLoading) {
+
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+        }
     }
 }

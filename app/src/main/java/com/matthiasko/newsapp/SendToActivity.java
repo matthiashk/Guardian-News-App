@@ -5,4 +5,5 @@ package com.matthiasko.newsapp;
  */
 public interface SendToActivity {
     void sendData(NewsItem[] results);
+    void stopLoadingPanel(Boolean isFinishedLoading);
 }

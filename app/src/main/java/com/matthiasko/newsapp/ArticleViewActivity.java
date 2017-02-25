@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -68,5 +70,18 @@ public class ArticleViewActivity extends AppCompatActivity {
         textView.setText(Html.fromHtml(doc.toString()));
 
         //textView.setText(Html.fromHtml(message));
+
+        Transition enterTrans = new Slide();
+        getWindow().setEnterTransition(enterTrans);
+
+        Transition returnTrans = new Slide();
+        getWindow().setReturnTransition(returnTrans);
+    }
+
+    // use this to make the up button trigger the correct animation
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.slide_out_down, R.anim.slide_in_up);
     }
 }

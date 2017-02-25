@@ -200,6 +200,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
         if (values != null) {
             dataSendToActivity.sendData(values);
+            dataSendToActivity.stopLoadingPanel(true);
         }
     }
 }
