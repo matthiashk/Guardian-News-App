@@ -110,6 +110,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             final String BOOKS_BASE_URL = "http://content.guardianapis.com/search?";
             final String DATE_PARAM = "from-date";
             final String FIELDS_PARAM = "show-fields";
+            final String PAGESIZE_PARAM = "page-size";
+
             final String API_KEY_PARAM = "api-key";
 
             final String THUMBNAIL = "thumbnail";
@@ -118,11 +120,13 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
             String datetime = dateFormat.format(date);
+            String pagesize = "20";
             //System.out.println("Current Date Time : " + datetime);
 
             Uri builtUri = Uri.parse(BOOKS_BASE_URL)
                     .buildUpon()
                     .appendQueryParameter(DATE_PARAM, datetime)
+                    .appendQueryParameter(PAGESIZE_PARAM, pagesize)
                     .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE)
                     .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
                     .build();

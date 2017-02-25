@@ -26,7 +26,17 @@ public class ArticleViewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String title = intent.getStringExtra(MainActivity.EXTRA_TITLE);
+        String byline = intent.getStringExtra(MainActivity.EXTRA_BYLINE);
+
+
+
         TextView textView = (TextView) findViewById(R.id.articleTextView);
+        TextView titleTextView = (TextView) findViewById(R.id.titleTextView);
+        TextView bylineTextView = (TextView) findViewById(R.id.bylineTextView);
+
+        titleTextView.setText(title);
+        bylineTextView.setText(byline);
 
         // parse html
         // remove href

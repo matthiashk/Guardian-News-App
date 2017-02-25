@@ -8,8 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 /**
  * Created by matthiasko on 8/15/16.
  */
@@ -36,7 +34,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
             holder = new ViewHolder();
             holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
-            holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
+            //holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
             holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
             convertView.setTag(holder);
 
@@ -49,6 +47,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         holder.titleTextView.setText(currentNewsItem.getTitle());
         holder.bylineTextView.setText(currentNewsItem.getByline());
 
+        /*
         if (!currentNewsItem.getThumbnail().isEmpty()) {
 
             Picasso.with(mContext)
@@ -65,6 +64,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
                     .into(holder.thumbnailImageView);
 
         }
+        */
 
         return convertView;
     }

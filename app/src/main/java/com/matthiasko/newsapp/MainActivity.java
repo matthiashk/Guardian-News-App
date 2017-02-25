@@ -19,22 +19,29 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
     ListView listView;
     NewsAdapter newsAdapter;
     NewsItem[] results;
+    String title;
+    String byline;
 
     public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
+    public final static String EXTRA_TITLE = "com.matthiasko.newsapp.TITLE";
+    public final static String EXTRA_BYLINE = "com.matthiasko.newsapp.BYLINE";
 
+    Handler handler = new Handler() { // used to get article html from fetcharticleaynctask onpostexecute
 
-    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             String value = (String) msg.obj;
 
-            // TODO: send to articleviewactivity
+            // send to articleviewactivity
 
             Intent intent = new Intent(getApplicationContext(), ArticleViewActivity.class);
             intent.putExtra(EXTRA_MESSAGE, value);
+            intent.putExtra(EXTRA_TITLE, title);
+            intent.putExtra(EXTRA_BYLINE, byline);
+
             startActivity(intent);
 
-            System.out.println("MAINACTIVITY value = " + value);
+            //System.out.println("MAINACTIVITY value = " + value);
         }
     };
 
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                //TODO: instead of launching url in web browser
+                // instead of launching url in web browser
                 // make api request for selected article
                 // get full text and load in textview/new activity
 
@@ -83,6 +90,12 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
                 // change https://www.theguardian.com to https://content.guardianapis.com
                 // add api-key
                 // add &show-blocks=all to end of url
+
+
+                // send title and byline to articleviewactivity
+                title = item.getTitle();
+                byline = item.getByline();
+
 
                 String webUrl = item.getWebUrl();
 
@@ -118,21 +131,8 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
                     e.printStackTrace();
                 }
 
-                // send changed url to fetcharticleasynctask to process url
-
-
-
-
-                // bodyTextSummary will contain article text
-
-                // send bodyTextSummary to new activity and display to user
-
                 // disabled
                 //startActivity(browserIntent);
-
-
-
-
             }
         });
 

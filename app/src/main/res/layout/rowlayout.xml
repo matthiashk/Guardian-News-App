@@ -3,52 +3,50 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--
     <ImageView
         android:id="@+id/thumbnail_imageview"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:paddingTop="10dp"/>
-
-    <TextView
-        android:id="@+id/sectionname_textview"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="18sp"
-        android:text="Section Name"
-        android:layout_toEndOf="@+id/thumbnail_imageview"
-        android:paddingTop="5dp"
-        android:paddingStart="10dp"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    -->
 
     <TextView
         android:id="@+id/title_textview"
         android:textColor="@android:color/black"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Title"
-        android:layout_below="@+id/sectionname_textview"
-        android:layout_toEndOf="@+id/thumbnail_imageview"
+
 
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:paddingStart="10dp"/>
+        />
 
     <TextView
         android:id="@+id/byline_textview"
         android:textColor="@android:color/black"
-        android:textSize="12sp"
+        android:textSize="13sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Byline"
         android:layout_below="@+id/title_textview"
-        android:layout_toEndOf="@+id/thumbnail_imageview"
 
         android:paddingTop="5dp"
         android:paddingBottom="10dp"
-        android:paddingStart="10dp"/>
+        />
 
+    <TextView
+        android:id="@+id/sectionname_textview"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="13sp"
+        android:text="Section Name"
+        android:layout_below="@+id/byline_textview"
 
+        android:paddingBottom="5dp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

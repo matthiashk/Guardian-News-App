@@ -20,7 +20,7 @@ import java.net.URL;
  * Created by matthiasko on 2/23/17.
  */
 
-public class FetchArticleAsyncTask extends AsyncTask<URL, Void, String> {
+public class FetchArticleAsyncTask extends AsyncTask<Object, Void, String> {
 
     private final String LOG_TAG = FetchArticleAsyncTask.class.getSimpleName();
 
@@ -71,7 +71,7 @@ public class FetchArticleAsyncTask extends AsyncTask<URL, Void, String> {
     }
 
     @Override
-    protected String doInBackground(URL... params) {
+    protected String doInBackground(Object... params) {
 
         // will contain the raw JSON response as a string.
         String booksJsonResponseString;
@@ -81,9 +81,12 @@ public class FetchArticleAsyncTask extends AsyncTask<URL, Void, String> {
 
         String values = "";
 
+        //String title = (String)params[1];
+        //String byline = (String)params[2];
+
         try {
 
-            URL url = params[0];
+            URL url = (URL)params[0];
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
