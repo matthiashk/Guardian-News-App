@@ -20,6 +20,7 @@
         <activity
             android:name="com.matthiasko.newsapp.ArticleViewActivity"
             android:label="@string/title_activity_articleview"
+            android:launchMode="singleTask"
             android:parentActivityName="com.matthiasko.newsapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

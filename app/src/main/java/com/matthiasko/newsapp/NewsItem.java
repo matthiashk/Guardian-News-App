@@ -13,6 +13,15 @@ public class NewsItem implements Parcelable {
     String webUrl;
     String thumbnail;
     String byline;
+    String trailText;
+
+    public String getTrailText() {
+        return trailText;
+    }
+
+    public void setTrailText(String trailText) {
+        this.trailText = trailText;
+    }
 
     public NewsItem(){}
 
@@ -68,6 +77,7 @@ public class NewsItem implements Parcelable {
         dest.writeString(webUrl);
         dest.writeString(thumbnail);
         dest.writeString(byline);
+        dest.writeString(trailText);
     }
 
     // some parcelable code from https://dzone.com/articles/using-android-parcel
@@ -88,5 +98,6 @@ public class NewsItem implements Parcelable {
         webUrl = pc.readString();
         thumbnail = pc.readString();
         byline = pc.readString();
+        trailText = pc.readString();
     }
 }

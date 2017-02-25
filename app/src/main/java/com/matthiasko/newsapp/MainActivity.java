@@ -17,6 +17,8 @@ import android.widget.ListView;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static android.R.attr.value;
+
 public class MainActivity extends AppCompatActivity implements SendToActivity {
 
     ListView listView;
@@ -42,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             intent.putExtra(EXTRA_TITLE, title);
             intent.putExtra(EXTRA_BYLINE, byline);
 
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
-            startActivity(intent, options.toBundle());
+
+            startActivity(intent);
 
 
             //System.out.println("MAINACTIVITY value = " + value);
@@ -137,6 +139,14 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
 
                 // disabled
                 //startActivity(browserIntent);
+
+                Intent intent = new Intent(MainActivity.this, ArticleViewActivity.class);
+                intent.putExtra(EXTRA_MESSAGE, value);
+                intent.putExtra(EXTRA_TITLE, title);
+                intent.putExtra(EXTRA_BYLINE, byline);
+
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                startActivity(intent, options.toBundle());
             }
         });
 

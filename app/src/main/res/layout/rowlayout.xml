@@ -1,52 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--
-    <ImageView
-        android:id="@+id/thumbnail_imageview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:paddingTop="10dp"/>
-    -->
 
     <TextView
         android:id="@+id/title_textview"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
         android:text="Title"
-
-
+        android:textStyle="bold"
+        android:fontFamily="serif"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         />
 
     <TextView
-        android:id="@+id/byline_textview"
-        android:textColor="@android:color/black"
-        android:textSize="13sp"
+        android:id="@+id/trailtext_textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Byline"
-        android:layout_below="@+id/title_textview"
-
-        android:paddingTop="5dp"
-        android:paddingBottom="10dp"
+        android:textSize="14sp"
+        android:text="TrailText"
+        android:layout_below="@id/title_textview"
+        android:paddingBottom="5dp"
         />
 
     <TextView
         android:id="@+id/sectionname_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="13sp"
         android:text="Section Name"
-        android:layout_below="@+id/byline_textview"
-
+        android:layout_below="@+id/trailtext_textview"
         android:paddingBottom="5dp"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        />
 
 </RelativeLayout>

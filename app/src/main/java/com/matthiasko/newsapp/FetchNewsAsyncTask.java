@@ -63,9 +63,16 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
                     String thumbnail = "";
 
+                    String trailText = "";
+
                     if (fieldsJson.has("thumbnail")) {
                         thumbnail = fieldsJson.getString("thumbnail");
                     }
+
+                    if (fieldsJson.has("trailText")) {
+                        trailText = fieldsJson.getString("trailText");
+                    }
+
 
                     String byline = fieldsJson.getString("byline");
 
@@ -75,6 +82,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                     newsItem.setSectionName(sectionName);
                     newsItem.setWebUrl(webUrl);
                     newsItem.setByline(byline);
+                    newsItem.setTrailText(trailText);
 
                     values[i] = newsItem;
                 }
@@ -116,6 +124,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
             final String THUMBNAIL = "thumbnail";
             final String BYLINE = ",byline";
+            final String TRAILTEXT = ",trailText";
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
@@ -127,7 +136,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                     .buildUpon()
                     .appendQueryParameter(DATE_PARAM, datetime)
                     .appendQueryParameter(PAGESIZE_PARAM, pagesize)
-                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE)
+                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE + TRAILTEXT)
                     .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
                     .build();
 

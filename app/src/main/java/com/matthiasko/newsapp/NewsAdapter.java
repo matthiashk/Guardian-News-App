@@ -35,7 +35,8 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
             holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
             //holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
-            holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
+            //holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
+            holder.trailTextView = (TextView) convertView.findViewById(R.id.trailtext_textview);
             convertView.setTag(holder);
 
         } else {
@@ -43,9 +44,24 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         }
 
         NewsItem currentNewsItem = objects[position];
-        holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
+
+        if (!currentNewsItem.getSectionName().isEmpty()) {
+            holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
+        }
+
         holder.titleTextView.setText(currentNewsItem.getTitle());
-        holder.bylineTextView.setText(currentNewsItem.getByline());
+
+        if (!currentNewsItem.getTrailText().isEmpty()) {
+
+            holder.trailTextView.setText(currentNewsItem.getTrailText());
+        }
+
+
+        /*
+        if (!currentNewsItem.getByline().isEmpty()) {
+            holder.bylineTextView.setText(currentNewsItem.getByline());
+        }
+        */
 
         /*
         if (!currentNewsItem.getThumbnail().isEmpty()) {
@@ -75,6 +91,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         TextView titleTextView;
         TextView bylineTextView;
         ImageView thumbnailImageView;
+        TextView trailTextView;
 
     }
 }

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.transition.Slide;
 import android.transition.Transition;
+import android.view.View;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -19,19 +20,34 @@ import org.jsoup.select.Elements;
 
 public class ArticleViewActivity extends AppCompatActivity {
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articleview);
 
-        Intent intent = getIntent();
+        Transition enterTrans = new Slide();
+        getWindow().setEnterTransition(enterTrans);
+
+        Transition returnTrans = new Slide();
+        getWindow().setReturnTransition(returnTrans);
+    }
+
+    // use this to make the up button trigger the correct animation
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.slide_out_down, R.anim.slide_in_up);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        //intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         String title = intent.getStringExtra(MainActivity.EXTRA_TITLE);
         String byline = intent.getStringExtra(MainActivity.EXTRA_BYLINE);
-
-
 
         TextView textView = (TextView) findViewById(R.id.articleTextView);
         TextView titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -40,7 +56,7 @@ public class ArticleViewActivity extends AppCompatActivity {
         titleTextView.setText(title);
         bylineTextView.setText(byline);
 
-        // parse html
+        // parse html using Jsoup
         // remove href
         // remove aside
         Document doc = Jsoup.parseBodyFragment(message);
@@ -57,31 +73,8 @@ public class ArticleViewActivity extends AppCompatActivity {
         Elements figcaptions = doc.select("figcaption");
         figcaptions.remove();
 
-        /*
-        for (Element link : links) {
-            //System.out.println("src = " + src);
-        }
-
-        for (Element aside : asides) {
-            //System.out.println("aside = " + aside);
-        }*/
-
-
         textView.setText(Html.fromHtml(doc.toString()));
 
-        //textView.setText(Html.fromHtml(message));
-
-        Transition enterTrans = new Slide();
-        getWindow().setEnterTransition(enterTrans);
-
-        Transition returnTrans = new Slide();
-        getWindow().setReturnTransition(returnTrans);
-    }
-
-    // use this to make the up button trigger the correct animation
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(R.anim.slide_out_down, R.anim.slide_in_up);
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 }
