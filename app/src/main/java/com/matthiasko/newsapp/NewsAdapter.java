@@ -8,6 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by matthiasko on 8/15/16.
  */
@@ -37,6 +40,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
             //holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
             //holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
             holder.trailTextView = (TextView) convertView.findViewById(R.id.trailtext_textview);
+            holder.webDateTextView = (TextView) convertView.findViewById(R.id.webdate_textview);
             convertView.setTag(holder);
 
         } else {
@@ -45,17 +49,14 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
 
         NewsItem currentNewsItem = objects[position];
 
-        if (!currentNewsItem.getSectionName().isEmpty()) {
-            holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
-        }
-
         holder.titleTextView.setText(currentNewsItem.getTitle());
+        holder.trailTextView.setText(currentNewsItem.getTrailText());
+        holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
 
-        if (!currentNewsItem.getTrailText().isEmpty()) {
-
-            holder.trailTextView.setText(currentNewsItem.getTrailText());
-        }
-
+        SimpleDateFormat dateformat = new SimpleDateFormat("MMM d");
+        Date date = currentNewsItem.getWebDate();
+        String dateString = dateformat.format(date);
+        holder.webDateTextView.setText(dateString);
 
         /*
         if (!currentNewsItem.getByline().isEmpty()) {
@@ -92,6 +93,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         TextView bylineTextView;
         ImageView thumbnailImageView;
         TextView trailTextView;
+        TextView webDateTextView;
 
     }
 }

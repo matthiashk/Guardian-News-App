@@ -3,6 +3,8 @@ package com.matthiasko.newsapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 /**
  * Created by matthiasko on 8/15/16.
  */
@@ -14,6 +16,15 @@ public class NewsItem implements Parcelable {
     String thumbnail;
     String byline;
     String trailText;
+    Date webDate;
+
+    public Date getWebDate() {
+        return webDate;
+    }
+
+    public void setWebDate(Date webDate) {
+        this.webDate = webDate;
+    }
 
     public String getTrailText() {
         return trailText;
@@ -78,6 +89,7 @@ public class NewsItem implements Parcelable {
         dest.writeString(thumbnail);
         dest.writeString(byline);
         dest.writeString(trailText);
+        dest.writeLong(webDate.getTime());
     }
 
     // some parcelable code from https://dzone.com/articles/using-android-parcel
@@ -99,5 +111,6 @@ public class NewsItem implements Parcelable {
         thumbnail = pc.readString();
         byline = pc.readString();
         trailText = pc.readString();
+        webDate = new Date(pc.readLong());
     }
 }

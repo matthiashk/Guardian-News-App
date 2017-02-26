@@ -2,8 +2,10 @@ package com.matthiasko.newsapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,18 +18,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by matthiasko on 8/15/16.
  */
-public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
+public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
 
     private final String LOG_TAG = FetchNewsAsyncTask.class.getSimpleName();
     private final Context mContext;
 
     SendToActivity dataSendToActivity;
+    Date date;
 
     public FetchNewsAsyncTask(Context context, Activity activity) {
         mContext = context;
@@ -35,6 +39,10 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     }
 
     NewsItem[] values;
+
+    URL url;
+
+    Boolean isIOException = false;
 
     // parsing based on http://stackoverflow.com/a/14699406/1079883
     private NewsItem[] parseBooksJson(String responseString)
@@ -61,6 +69,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
 
                     JSONObject fieldsJson = jArray.getJSONObject(i).getJSONObject("fields");
 
+                    String webDate = jArray.getJSONObject(i).getString("webPublicationDate");
+
                     String thumbnail = "";
 
                     String trailText = "";
@@ -73,8 +83,17 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                         trailText = fieldsJson.getString("trailText");
                     }
 
+                    // using optString here bc sometimes byline does not exist
+                    String byline = fieldsJson.optString("byline");
 
-                    String byline = fieldsJson.getString("byline");
+                    // convert string date to Date object
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    try {
+                        date = format.parse(webDate);
+                        //System.out.println(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
                     NewsItem newsItem = new NewsItem();
                     newsItem.setTitle(title);
@@ -83,8 +102,11 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
                     newsItem.setWebUrl(webUrl);
                     newsItem.setByline(byline);
                     newsItem.setTrailText(trailText);
+                    newsItem.setWebDate(date);
 
                     values[i] = newsItem;
+
+                    //System.out.println("values.length = " + values.length);
                 }
             } else {
 
@@ -100,7 +122,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     }
 
     @Override
-    protected NewsItem[] doInBackground(Void... params) {
+    protected NewsItem[] doInBackground(String... params) {
         // doInBackground main code based on my previous project Popular Movies 2
 
         // will contain the raw JSON response as a string.
@@ -109,7 +131,7 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        NewsItem[] values = new NewsItem[100];
+
 
         // example query
         // http://content.guardianapis.com/search?from-date=2016-08-15&api-key=myApiKey
@@ -119,6 +141,8 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             final String DATE_PARAM = "from-date";
             final String FIELDS_PARAM = "show-fields";
             final String PAGESIZE_PARAM = "page-size";
+
+            final String SECTION_PARAM = "section";
 
             final String API_KEY_PARAM = "api-key";
 
@@ -132,16 +156,86 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             String pagesize = "20";
             //System.out.println("Current Date Time : " + datetime);
 
-            Uri builtUri = Uri.parse(BOOKS_BASE_URL)
-                    .buildUpon()
-                    .appendQueryParameter(DATE_PARAM, datetime)
-                    .appendQueryParameter(PAGESIZE_PARAM, pagesize)
-                    .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE + TRAILTEXT)
-                    .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
-                    .build();
-
-            URL url = new URL(builtUri.toString());
-
+            if (params.length == 1) {
+                String sectionName = params[0];
+                String idName = "";
+                // convert sectionName to idName
+                switch (sectionName) {
+                    case "Art and Design":
+                        idName = "artanddesign";
+                        break;
+                    case "Books":
+                        idName = "books";
+                        break;
+                    case "Business":
+                        idName = "business";
+                        break;
+                    case "Opinion":
+                        idName = "commentisfree";
+                        break;
+                    case "Culture":
+                        idName = "culture";
+                        break;
+                    case "Education":
+                        idName = "education";
+                        break;
+                    case "Environment":
+                        idName = "environment";
+                        break;
+                    case "Film":
+                        idName = "film";
+                        break;
+                    case "Music":
+                        idName = "music";
+                        break;
+                    case "News":
+                        idName = "news";
+                        break;
+                    case "Politics":
+                        idName = "politics";
+                        break;
+                    case "Science":
+                        idName = "science";
+                        break;
+                    case "Society":
+                        idName = "society";
+                        break;
+                    case "Technology":
+                        idName = "technology";
+                        break;
+                    case "Travel":
+                        idName = "travel";
+                        break;
+                    case "UK News":
+                        idName = "uk-news";
+                        break;
+                    case "US News":
+                        idName = "us-news";
+                        break;
+                    case "World News":
+                        idName = "world";
+                        break;
+                }
+                // build uri with sectionName
+                Uri builtUri = Uri.parse(BOOKS_BASE_URL)
+                        .buildUpon()
+                        .appendQueryParameter(DATE_PARAM, datetime)
+                        .appendQueryParameter(PAGESIZE_PARAM, pagesize)
+                        .appendQueryParameter(SECTION_PARAM, idName)
+                        .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE + TRAILTEXT)
+                        .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
+                        .build();
+                url = new URL(builtUri.toString());
+            } else {
+                Uri builtUri = Uri.parse(BOOKS_BASE_URL)
+                        .buildUpon()
+                        .appendQueryParameter(DATE_PARAM, datetime)
+                        .appendQueryParameter(PAGESIZE_PARAM, pagesize)
+                        .appendQueryParameter(FIELDS_PARAM, THUMBNAIL + BYLINE + TRAILTEXT)
+                        .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
+                        .build();
+                url = new URL(builtUri.toString());
+            }
             //System.out.println("builtUri = " + builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -177,10 +271,16 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
             }
             booksJsonResponseString = buffer.toString();
 
+            NewsItem[] values = new NewsItem[100];
+
             values = parseBooksJson(booksJsonResponseString);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
+            e.printStackTrace();
+
+            isIOException = true;
+
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -207,9 +307,36 @@ public class FetchNewsAsyncTask extends AsyncTask<Void, Void, NewsItem[]> {
     protected void onPostExecute(NewsItem[] values) {
         super.onPostExecute(values);
 
+        if (isIOException) {
+
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setMessage("There was an error connecting to the server. Please try again later.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            /*
+            // set the width
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = 800;
+            dialog.getWindow().setAttributes(lp);
+            */
+
+        }
+
         if (values != null) {
             dataSendToActivity.sendData(values);
-            dataSendToActivity.stopLoadingPanel(true);
+
         }
+
+        dataSendToActivity.stopLoadingPanel(true);
     }
 }
