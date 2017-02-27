@@ -95,6 +95,11 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                         e.printStackTrace();
                     }
 
+                    // skip crosswords, causes crash
+                    if (sectionName.contains("crosswords")) {
+                        continue;
+                    }
+
                     NewsItem newsItem = new NewsItem();
                     newsItem.setTitle(title);
                     newsItem.setThumbnail(thumbnail);

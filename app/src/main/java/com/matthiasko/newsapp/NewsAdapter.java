@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,7 +39,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
             holder = new ViewHolder();
             holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
-            //holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
+            holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
             //holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
             holder.trailTextView = (TextView) convertView.findViewById(R.id.trailtext_textview);
             holder.webDateTextView = (TextView) convertView.findViewById(R.id.webdate_textview);
@@ -64,24 +66,20 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         }
         */
 
-        /*
+
         if (!currentNewsItem.getThumbnail().isEmpty()) {
 
             Picasso.with(mContext)
                     .load(currentNewsItem.getThumbnail())
-                    .resize(100, 100)
-                    .centerCrop()
                     .into(holder.thumbnailImageView);
         } else {
 
             Picasso.with(mContext)
-                    .load(R.drawable.nothumbnail)
-                    .resize(100, 100)
-                    .centerCrop()
+                    .load(R.drawable.gu_logo_fallback_resized)
                     .into(holder.thumbnailImageView);
 
         }
-        */
+
 
         return convertView;
     }
