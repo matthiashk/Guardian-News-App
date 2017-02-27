@@ -1,12 +1,12 @@
 package com.matthiasko.newsapp;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +30,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     String title;
     String byline;
+    String thumbnail;
+
+    ViewHolder viewHolder;
 
     public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
     public final static String EXTRA_TITLE = "com.matthiasko.newsapp.TITLE";
     public final static String EXTRA_BYLINE = "com.matthiasko.newsapp.BYLINE";
+    public final static String EXTRA_THUMBNAIL = "com.matthiasko.newsapp.THUMBNAIL";
+
 
     private final NewsItem[] objects;
     Context mContext;
@@ -50,7 +55,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             intent.putExtra(EXTRA_MESSAGE, value);
             intent.putExtra(EXTRA_TITLE, title);
             intent.putExtra(EXTRA_BYLINE, byline);
+            intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
 
+            /*
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation((Activity)mContext, viewHolder.thumbnailImageView, "image");
+            mContext.startActivity(intent, options.toBundle());
+            */
             mContext.startActivity(intent);
         }
     };
@@ -97,7 +108,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, int i) {
+        this.viewHolder = viewHolder;
+
         final NewsItem currentNewsItem = objects[i];
         viewHolder.sectionNameTextView.setText(currentNewsItem.sectionName);
         viewHolder.titleTextView.setText(currentNewsItem.title);
@@ -130,6 +143,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 // set title and byline here, sent by handler after
                 title = currentNewsItem.getTitle();
                 byline = currentNewsItem.getByline();
+                thumbnail = currentNewsItem.getThumbnail();
 
                 String webUrl = currentNewsItem.getWebUrl();
 
@@ -164,8 +178,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 intent.putExtra(EXTRA_MESSAGE, value);
                 intent.putExtra(EXTRA_TITLE, title);
                 intent.putExtra(EXTRA_BYLINE, byline);
+                intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
 
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity)mContext);
+
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation((Activity)mContext, viewHolder.thumbnailImageView, "image");
                 mContext.startActivity(intent, options.toBundle());
             }
         });

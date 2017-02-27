@@ -7,8 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Slide;
-import android.transition.Transition;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -141,12 +139,14 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
         new FetchNewsAsyncTask(this, MainActivity.this).execute();
 
 
+        /*
         // setup transition animations
         Transition exitTrans = new Slide();
         getWindow().setExitTransition(exitTrans);
 
         Transition reenterTrans = new Slide();
         getWindow().setReenterTransition(reenterTrans);
+        */
     }
 
     @Override

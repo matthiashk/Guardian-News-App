@@ -86,7 +86,6 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                         String trailTextTemp = fieldsJson.getString("trailText");
 
                         // remove tags here
-
                         Document doc = Jsoup.parseBodyFragment(trailTextTemp);
 
                         Elements links = doc.select("a[href]");
@@ -108,7 +107,6 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                         breakTag.remove();
 
                         trailText = Jsoup.parse(doc.toString()).text();
-
                     }
 
                     // using optString here bc sometimes byline does not exist
