@@ -1,97 +1,173 @@
 package com.matthiasko.newsapp;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.R.attr.value;
 
 /**
  * Created by matthiasko on 8/15/16.
  */
-public class NewsAdapter extends ArrayAdapter<NewsItem> {
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
-    private final Context mContext;
+    String title;
+    String byline;
+
+    public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
+    public final static String EXTRA_TITLE = "com.matthiasko.newsapp.TITLE";
+    public final static String EXTRA_BYLINE = "com.matthiasko.newsapp.BYLINE";
+
     private final NewsItem[] objects;
+    Context mContext;
 
-    public NewsAdapter(Context context, int resource, NewsItem[] objects){
-        super(context, resource, objects);
+    // used to get article html from fetcharticleaynctask onpostexecute
+    Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            String value = (String) msg.obj;
+
+            // send to articleviewactivity
+            Intent intent = new Intent(mContext, ArticleViewActivity.class);
+            intent.putExtra(EXTRA_MESSAGE, value);
+            intent.putExtra(EXTRA_TITLE, title);
+            intent.putExtra(EXTRA_BYLINE, byline);
+
+            mContext.startActivity(intent);
+        }
+    };
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public final View view;
+        TextView sectionNameTextView;
+        TextView titleTextView;
+        ImageView thumbnailImageView;
+        TextView trailTextView;
+        TextView webDateTextView;
+        //TextView bylineTextView;
+
+        public ViewHolder(View v) {
+
+            super(v);
+            view = v;
+            sectionNameTextView = (TextView) v.findViewById(R.id.sectionname_textview);
+            titleTextView = (TextView) v.findViewById(R.id.title_textview);
+            thumbnailImageView = (ImageView) v.findViewById(R.id.thumbnail_imageview);
+            trailTextView = (TextView) v.findViewById(R.id.trailtext_textview);
+            webDateTextView = (TextView) v.findViewById(R.id.webdate_textview);
+        }
+    }
+
+    public NewsAdapter(Context context, NewsItem[]objects){
         this.mContext = context;
         this.objects = objects;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public int getItemCount() {
+        return objects.length;
+    }
 
-        ViewHolder holder;
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View itemView = LayoutInflater.
+                from(viewGroup.getContext()).
+                inflate(R.layout.rowlayout, viewGroup, false);
 
-        if (convertView == null) {
+        return new ViewHolder(itemView);
+    }
 
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.rowlayout, parent, false);
-            holder = new ViewHolder();
-            holder.sectionNameTextView = (TextView) convertView.findViewById(R.id.sectionname_textview);
-            holder.titleTextView = (TextView) convertView.findViewById(R.id.title_textview);
-            holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.thumbnail_imageview);
-            //holder.bylineTextView = (TextView) convertView.findViewById(R.id.byline_textview);
-            holder.trailTextView = (TextView) convertView.findViewById(R.id.trailtext_textview);
-            holder.webDateTextView = (TextView) convertView.findViewById(R.id.webdate_textview);
-            convertView.setTag(holder);
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+        final NewsItem currentNewsItem = objects[i];
+        viewHolder.sectionNameTextView.setText(currentNewsItem.sectionName);
+        viewHolder.titleTextView.setText(currentNewsItem.title);
 
+        if (!currentNewsItem.getThumbnail().isEmpty()) {
+
+            Picasso.with(viewHolder.thumbnailImageView.getContext())
+                    .load(currentNewsItem.getThumbnail())
+                    .into(viewHolder.thumbnailImageView);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+
+            Picasso.with(viewHolder.thumbnailImageView.getContext())
+                    .load(R.drawable.gu_logo_fallback_resized)
+                    .into(viewHolder.thumbnailImageView);
+
         }
 
-        NewsItem currentNewsItem = objects[position];
-
-        holder.titleTextView.setText(currentNewsItem.getTitle());
-        holder.trailTextView.setText(currentNewsItem.getTrailText());
-        holder.sectionNameTextView.setText(currentNewsItem.getSectionName());
+        viewHolder.trailTextView.setText(currentNewsItem.trailText);
 
         SimpleDateFormat dateformat = new SimpleDateFormat("MMM d");
         Date date = currentNewsItem.getWebDate();
         String dateString = dateformat.format(date);
-        holder.webDateTextView.setText(dateString);
+        viewHolder.webDateTextView.setText(dateString);
 
-        /*
-        if (!currentNewsItem.getByline().isEmpty()) {
-            holder.bylineTextView.setText(currentNewsItem.getByline());
-        }
-        */
+        viewHolder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                // send title and byline to articleviewactivity
+                // set title and byline here, sent by handler after
+                title = currentNewsItem.getTitle();
+                byline = currentNewsItem.getByline();
 
-        if (!currentNewsItem.getThumbnail().isEmpty()) {
+                String webUrl = currentNewsItem.getWebUrl();
 
-            Picasso.with(mContext)
-                    .load(currentNewsItem.getThumbnail())
-                    .into(holder.thumbnailImageView);
-        } else {
+                try {
+                    URL aURL = new URL(webUrl);
 
-            Picasso.with(mContext)
-                    .load(R.drawable.gu_logo_fallback_resized)
-                    .into(holder.thumbnailImageView);
+                    String changedHost = "content.guardianapis.com";
 
-        }
+                    URL changedURL = new URL(aURL.getProtocol(), changedHost, aURL.getPort(), aURL.getFile());
 
+                    final String SHOW_BLOCKS_PARAM = "show-blocks";
+                    final String API_KEY_PARAM = "api-key";
 
-        return convertView;
-    }
+                    String showBlocksAll = "all";
 
-    static class ViewHolder {
+                    Uri builtUri = Uri.parse(changedURL.toString())
+                            .buildUpon()
+                            .appendQueryParameter(SHOW_BLOCKS_PARAM, showBlocksAll)
+                            .appendQueryParameter(API_KEY_PARAM, mContext.getResources().getString(R.string.api_key))
+                            .build();
 
-        TextView sectionNameTextView;
-        TextView titleTextView;
-        TextView bylineTextView;
-        ImageView thumbnailImageView;
-        TextView trailTextView;
-        TextView webDateTextView;
+                    URL url = new URL(builtUri.toString());
+                    FetchArticleAsyncTask fetchTask = new FetchArticleAsyncTask();
+                    fetchTask.setHandler(handler);
+                    fetchTask.execute(url);
 
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+                Intent intent = new Intent(mContext, ArticleViewActivity.class);
+                intent.putExtra(EXTRA_MESSAGE, value);
+                intent.putExtra(EXTRA_TITLE, title);
+                intent.putExtra(EXTRA_BYLINE, byline);
+
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity)mContext);
+                mContext.startActivity(intent, options.toBundle());
+            }
+        });
     }
 }

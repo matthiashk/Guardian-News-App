@@ -1,61 +1,31 @@
 package com.matthiasko.newsapp;
 
-import android.app.ActivityOptions;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static android.R.attr.value;
 
 public class MainActivity extends AppCompatActivity implements SendToActivity {
 
-    ListView listView;
+    private RecyclerView mRecyclerView;
+    //private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    //ListView listView;
     NewsAdapter newsAdapter;
     NewsItem[] results;
-    String title;
-    String byline;
-
-    public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
-    public final static String EXTRA_TITLE = "com.matthiasko.newsapp.TITLE";
-    public final static String EXTRA_BYLINE = "com.matthiasko.newsapp.BYLINE";
-
-    Handler handler = new Handler() { // used to get article html from fetcharticleaynctask onpostexecute
-
-        @Override
-        public void handleMessage(Message msg) {
-            String value = (String) msg.obj;
-
-            // send to articleviewactivity
-
-            Intent intent = new Intent(MainActivity.this, ArticleViewActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, value);
-            intent.putExtra(EXTRA_TITLE, title);
-            intent.putExtra(EXTRA_BYLINE, byline);
 
 
-            startActivity(intent);
 
-
-            //System.out.println("MAINACTIVITY value = " + value);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +33,18 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
 
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.news_listview);
+        mRecyclerView = (RecyclerView) findViewById(R.id.news_listview);
+
+
+        //listView = (ListView) findViewById(R.id.news_listview);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+
+
+
 
         if (savedInstanceState != null) {
 
@@ -71,18 +52,18 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
             NewsItem[] newsItems = new NewsItem[ps.length];
             System.arraycopy(ps, 0, newsItems, 0, ps.length);
             results = newsItems;
-            newsAdapter = new NewsAdapter(this, -1, newsItems);
-            listView.setAdapter(newsAdapter);
-            //listView.setEmptyView(findViewById(R.id.empty_textview));
+            newsAdapter = new NewsAdapter(this, newsItems);
+            mRecyclerView.setAdapter(newsAdapter);            //listView.setEmptyView(findViewById(R.id.empty_textview));
             newsAdapter.notifyDataSetChanged();
 
         } else {
             // setup initial empty list + empty view
             results = new NewsItem[0];
-            newsAdapter = new NewsAdapter(this, -1, results);
-            listView.setAdapter(newsAdapter);
-            //listView.setEmptyView(findViewById(R.id.empty_textview));
+            newsAdapter = new NewsAdapter(this, results);
+            mRecyclerView.setAdapter(newsAdapter);            //listView.setEmptyView(findViewById(R.id.empty_textview));
         }
+
+        /*
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -154,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
                 startActivity(intent, options.toBundle());
             }
         });
+        */
+
 
         new FetchNewsAsyncTask(this, MainActivity.this).execute();
 
@@ -217,9 +200,8 @@ public class MainActivity extends AppCompatActivity implements SendToActivity {
     @Override
     public void sendData(NewsItem[] itemsArray) {
         results = itemsArray;
-        newsAdapter = new NewsAdapter(this, -1, results);
-        listView.setAdapter(newsAdapter);
-    }
+        newsAdapter = new NewsAdapter(this, results);
+        mRecyclerView.setAdapter(newsAdapter);    }
 
     @Override
     public void stopLoadingPanel(Boolean isFinishedLoading) {

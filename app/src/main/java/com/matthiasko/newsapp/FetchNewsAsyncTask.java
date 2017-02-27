@@ -11,6 +11,9 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,7 +83,32 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                     }
 
                     if (fieldsJson.has("trailText")) {
-                        trailText = fieldsJson.getString("trailText");
+                        String trailTextTemp = fieldsJson.getString("trailText");
+
+                        // remove tags here
+
+                        Document doc = Jsoup.parseBodyFragment(trailTextTemp);
+
+                        Elements links = doc.select("a[href]");
+                        links.unwrap();
+
+                        Elements asides = doc.select("aside");
+                        asides.remove();
+
+                        Elements figures = doc.select("figure");
+                        figures.remove();
+
+                        Elements figcaptions = doc.select("figcaption");
+                        figcaptions.remove();
+
+                        Elements strong = doc.select("strong");
+                        strong.remove();
+
+                        Elements breakTag = doc.select("br");
+                        breakTag.remove();
+
+                        trailText = Jsoup.parse(doc.toString()).text();
+
                     }
 
                     // using optString here bc sometimes byline does not exist
@@ -311,11 +339,7 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
     @Override
     protected void onPostExecute(NewsItem[] values) {
         super.onPostExecute(values);
-
         if (isIOException) {
-
-
-
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setMessage("There was an error connecting to the server. Please try again later.")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -326,7 +350,6 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                 });
             AlertDialog dialog = builder.create();
             dialog.show();
-
             /*
             // set the width
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -334,12 +357,10 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
             lp.width = 800;
             dialog.getWindow().setAttributes(lp);
             */
-
         }
 
         if (values != null) {
             dataSendToActivity.sendData(values);
-
         }
 
         dataSendToActivity.stopLoadingPanel(true);

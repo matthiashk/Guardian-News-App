@@ -30,6 +30,10 @@ public class ArticleViewActivity extends AppCompatActivity {
 
         Transition returnTrans = new Slide();
         getWindow().setReturnTransition(returnTrans);
+
+        //TODO: add onnewintent methods here? or create new method with code in onnewintent?
+
+        //System.out.println("ONCREATE");
     }
 
     // use this to make the up button trigger the correct animation
@@ -44,10 +48,12 @@ public class ArticleViewActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
 
+        //System.out.println("ONNEWINTENT");
+
         //intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        String title = intent.getStringExtra(MainActivity.EXTRA_TITLE);
-        String byline = intent.getStringExtra(MainActivity.EXTRA_BYLINE);
+        String message = intent.getStringExtra(NewsAdapter.EXTRA_MESSAGE);
+        String title = intent.getStringExtra(NewsAdapter.EXTRA_TITLE);
+        String byline = intent.getStringExtra(NewsAdapter.EXTRA_BYLINE);
 
         TextView textView = (TextView) findViewById(R.id.articleTextView);
         TextView titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -72,6 +78,10 @@ public class ArticleViewActivity extends AppCompatActivity {
 
         Elements figcaptions = doc.select("figcaption");
         figcaptions.remove();
+
+        Elements strong = doc.select("strong");
+        strong.remove();
+
 
         textView.setText(Html.fromHtml(doc.toString()));
 
