@@ -23,19 +23,13 @@ import java.net.URL;
 public class FetchArticleAsyncTask extends AsyncTask<Object, Void, String> {
 
     private final String LOG_TAG = FetchArticleAsyncTask.class.getSimpleName();
-
+    String values;
     Handler handler = null;
-
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
-
-
     public FetchArticleAsyncTask() {
-
     }
-
-    String values;
 
     private String parseBooksJson(String responseString)
             throws JSONException {
@@ -53,20 +47,14 @@ public class FetchArticleAsyncTask extends AsyncTask<Object, Void, String> {
                 for(int i = 0; i < bodyArray.length(); i++) {
                     values = bodyArray.getJSONObject(i).getString("bodyHtml");
                 }
-
             } else {
-
                 // clear data here since there are no results found
                 values = "";
             }
         }
-
         catch(JSONException e) {
             e.printStackTrace();
         }
-
-
-
         return values;
     }
 
@@ -75,19 +63,12 @@ public class FetchArticleAsyncTask extends AsyncTask<Object, Void, String> {
 
         // will contain the raw JSON response as a string.
         String booksJsonResponseString;
-
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
         String values = "";
-
-        //String title = (String)params[1];
-        //String byline = (String)params[2];
-
         try {
 
             URL url = (URL)params[0];
-
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -152,12 +133,11 @@ public class FetchArticleAsyncTask extends AsyncTask<Object, Void, String> {
     @Override
     protected void onPostExecute(String values) {
         super.onPostExecute(values);
-
+        // using handler to send data to NewsAdapter
         if (handler != null) {
             Message message = new Message();
             message.obj = values;
             handler.sendMessage(message);
         }
-
     }
 }

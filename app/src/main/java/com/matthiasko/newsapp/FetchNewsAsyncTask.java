@@ -32,20 +32,16 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
 
     private final String LOG_TAG = FetchNewsAsyncTask.class.getSimpleName();
     private final Context mContext;
-
     SendToActivity dataSendToActivity;
     Date date;
+    NewsItem[] values;
+    URL url;
+    Boolean isIOException = false;
 
     public FetchNewsAsyncTask(Context context, Activity activity) {
         mContext = context;
         dataSendToActivity = (SendToActivity) activity;
     }
-
-    NewsItem[] values;
-
-    URL url;
-
-    Boolean isIOException = false;
 
     // parsing based on http://stackoverflow.com/a/14699406/1079883
     private NewsItem[] parseBooksJson(String responseString)
@@ -136,37 +132,30 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                     newsItem.setWebDate(date);
 
                     values[i] = newsItem;
-
-                    //System.out.println("values.length = " + values.length);
+                    }
+                } else {
+                    // clear array here since there are no results found
+                    values = new NewsItem[0];
                 }
-            } else {
-
-                // clear array here since there are no results found
-                values = new NewsItem[0];
             }
-        }
 
-        catch(JSONException e) {
-            e.printStackTrace();
-        }
+            catch(JSONException e) {
+                e.printStackTrace();
+            }
         return values;
     }
 
     @Override
     protected NewsItem[] doInBackground(String... params) {
         // doInBackground main code based on my previous project Popular Movies 2
-
         // will contain the raw JSON response as a string.
         String booksJsonResponseString;
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-
-
         // example query
         // http://content.guardianapis.com/search?from-date=2016-08-15&api-key=myApiKey
-
         try {
             final String BOOKS_BASE_URL = "http://content.guardianapis.com/search?";
             final String DATE_PARAM = "from-date";
@@ -302,17 +291,12 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
             }
             booksJsonResponseString = buffer.toString();
 
-            NewsItem[] values = new NewsItem[100];
-
             values = parseBooksJson(booksJsonResponseString);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             e.printStackTrace();
-
             isIOException = true;
-
-
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -330,7 +314,6 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                 }
             }
         }
-
         return values;
     }
 
@@ -348,19 +331,11 @@ public class FetchNewsAsyncTask extends AsyncTask<String, Void, NewsItem[]> {
                 });
             AlertDialog dialog = builder.create();
             dialog.show();
-            /*
-            // set the width
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(dialog.getWindow().getAttributes());
-            lp.width = 800;
-            dialog.getWindow().setAttributes(lp);
-            */
         }
 
         if (values != null) {
             dataSendToActivity.sendData(values);
         }
-
         dataSendToActivity.stopLoadingPanel(true);
     }
 }

@@ -31,15 +31,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     String title;
     String byline;
     String thumbnail;
-
     ViewHolder viewHolder;
-
     public final static String EXTRA_MESSAGE = "com.matthiasko.newsapp.MESSAGE";
     public final static String EXTRA_TITLE = "com.matthiasko.newsapp.TITLE";
     public final static String EXTRA_BYLINE = "com.matthiasko.newsapp.BYLINE";
     public final static String EXTRA_THUMBNAIL = "com.matthiasko.newsapp.THUMBNAIL";
-
-
     private final NewsItem[] objects;
     Context mContext;
 
@@ -56,12 +52,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             intent.putExtra(EXTRA_TITLE, title);
             intent.putExtra(EXTRA_BYLINE, byline);
             intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
-
-            /*
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation((Activity)mContext, viewHolder.thumbnailImageView, "image");
-            mContext.startActivity(intent, options.toBundle());
-            */
             mContext.startActivity(intent);
         }
     };
@@ -74,10 +64,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         ImageView thumbnailImageView;
         TextView trailTextView;
         TextView webDateTextView;
-        //TextView bylineTextView;
 
         public ViewHolder(View v) {
-
             super(v);
             view = v;
             sectionNameTextView = (TextView) v.findViewById(R.id.sectionname_textview);
@@ -103,7 +91,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.rowlayout, viewGroup, false);
-
         return new ViewHolder(itemView);
     }
 
@@ -179,8 +166,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 intent.putExtra(EXTRA_TITLE, title);
                 intent.putExtra(EXTRA_BYLINE, byline);
                 intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
-
-
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation((Activity)mContext, viewHolder.thumbnailImageView, "image");
                 mContext.startActivity(intent, options.toBundle());

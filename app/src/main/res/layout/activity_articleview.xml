@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:textColor="@android:color/black"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:typeface="serif"
                 android:layout_below="@id/thumbnail_imageview"
                 android:textStyle="bold"
